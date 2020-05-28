@@ -1,91 +1,57 @@
-"" Handle Plugins
 call plug#begin()
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-
-Plug 'purescript-contrib/purescript-vim'
-Plug 'gabrielelana/vim-markdown'
-
-Plug 'pangloss/vim-javascript'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'mxw/vim-jsx'
-Plug 'jparise/vim-graphql'
-Plug 'neovimhaskell/haskell-vim'
-
-Plug 'leafgarland/typescript-vim'
-"Plug 'Quramy/tsuquyomi'
-
-Plug 'idris-hackers/idris-vim'
-
-" Git bindings
-Plug 'tpope/vim-fugitive'
-
-" Case sensitive text replace!
-Plug 'tpope/vim-abolish'
-
-Plug 'tweekmonster/braceless.vim' " text objects and more for Python and other indented code
-
-" Auto-complete my brackets
-Plug 'rstacruz/vim-closer'
-
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-
+" Vim user interface
 Plug 'ayu-theme/ayu-vim'
 
-Plug 'Yggdroot/indentLine'
-
-" Show marks visually
-Plug 'kshenoy/vim-signature'
+" Nicer statusline
+Plug 'vim-airline/vim-airline'
 
 " Camelcase motion
 Plug 'bkad/CamelCaseMotion'
 
-" Spell checker
-Plug 'vim-scripts/ingo-library'
-Plug 'inkarkat/vim-spellcheck'
+" Git bindings
+Plug 'tpope/vim-fugitive'
+
+" Show marks visually
+Plug 'kshenoy/vim-signature'
+
+"" FZF with Vim
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+" Note: Using the following in .zshrc
+" export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+
+"" NerdTree cludge -- Long term want to try to get this out of my flow
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+
+" Cludge for rust
+Plug 'rust-lang/rust.vim'
+
+" Cludge for golang
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" Cludge for idris
+Plug 'idris-hackers/idris-vim'
+Plug 'purescript-contrib/purescript-vim'
 
 call plug#end()
 
-"" Make the typing gooder
-filetype plugin indent on
-
-autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescript.tsx
-
-" show existing tab with 2 spaces width
-set tabstop=4
-
-" when indenting with '>', used 2 spaces width
-set shiftwidth=4
-
-set expandtab
-
-" Speed up airline a little bit
-let g:airline_highlighting_cache = 1
-
-"" Visual Preferences
-
-" Turn off spell checking in markdown, it's distracting
-let g:markdown_enable_spell_checking = 0
-
-" Show line number
-:set number relativenumber
-
-map <silent> <C-b> :FZF<CR>
-
-" vim theme
+"" Set the vim Themes
 let ayucolor="mirage"
 colorscheme ayu
-set termguicolors     " enable true colors support"
+set termguicolors
 
-:augroup numbertoggle
-:  autocmd!
-:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-:augroup END
+"" Normal mode mappings
+
+" Add mappings for fzf and ag
+map <silent> <C-p> :FZF<CR>
+map <silent> <C-b> :FZF<CR>
+
+" Make Y yank till end of line (I use yy to yank current line anyway)
+nnoremap Y y$
+
+" Map gp to select the text I just pasted
+nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]' 
 
 " Enable the camelcase mappings!
 call camelcasemotion#CreateMotionMappings(',')
@@ -93,42 +59,59 @@ call camelcasemotion#CreateMotionMappings(',')
 vmap ,i <Esc>l,bv,e
 omap ,i :normal v,i<CR>
 
+"" General behavior
+"highlight current line
+set cursorline
+
+" show tabs with width 2
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+
+" Display a mark for tab characters
+set list
+set listchars=tab:\|\ ,extends:›,precedes:‹,nbsp:·,trail:·
+
+" Show additional context around top and bottom of buffer (start scrolling 5
+" lines before bottom
+set scrolloff=5
+
+" Use pboard for vim clipboard
+set clipboard=unnamed
+
+" Recognize the filetype
+syntax on
+filetype on
+filetype plugin indent on
+
 "" Handle Jumping between splits
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-"" Set up NERDTree
+"" enable nerd tree toggle
+map <silent> <C-b> :NERDTreeToggle<CR>
 
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Show relative line numbers, except current line which is absolute
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
 
-" Close if only Nerd tree is running
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Show line numbers in insert mode
+set number relativenumber
 
-" Set .prisma files to use graphql syntax highlighting
-au BufRead,BufNewFile *.prisma setfiletype graphql
+" Use smartcase for search and replace
+set ignorecase
+set smartcase
 
-" Use pboard for vim clipboard
-set clipboard=unnamed
+" Set 80 characters limit when writing markdown
+au BufRead,BufNewFile *.md setlocal textwidth=80
+au BufRead,BufNewFile *.markdown setlocal textwidth=80
 
-" Show additional context around top and bottom of buffer (start scrolling 5
-" lines before bottom
-set scrolloff=5
+"" Language Cludge: Rust
 
-" Map gp to select the text I just pasted
-nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-
-" Make Y yank till end of line (I use yy to yank current line anyway)
-nnoremap Y y$
-
-" Open NERDTree with Ctrl-N!
-map <silent> <C-n> :NERDTreeToggle<CR>
-
-" Use nicer NERDTree Arrows
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
-"" Limit spell checking to only comments
-" set spell
+" Enable auto rustfmt -- language
+let g:rustfmt_autosave = 1
