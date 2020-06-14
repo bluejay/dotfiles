@@ -24,18 +24,8 @@ Plug 'junegunn/fzf.vim'
 "" NerdTree cludge -- Long term want to try to get this out of my flow
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
-" Cludge for GraphQL
-Plug 'jparise/vim-graphql'
-
-" Cludge for rust
-Plug 'rust-lang/rust.vim'
-
-" Cludge for golang
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-
-" Cludge for idris
-Plug 'idris-hackers/idris-vim'
-Plug 'purescript-contrib/purescript-vim'
+" Languages cludge
+Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 
