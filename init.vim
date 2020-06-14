@@ -24,6 +24,9 @@ Plug 'junegunn/fzf.vim'
 "" NerdTree cludge -- Long term want to try to get this out of my flow
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
+" Cludge for GraphQL
+Plug 'jparise/vim-graphql'
+
 " Cludge for rust
 Plug 'rust-lang/rust.vim'
 
@@ -37,7 +40,7 @@ Plug 'purescript-contrib/purescript-vim'
 call plug#end()
 
 "" Set the vim Themes
-let ayucolor="mirage"
+let ayucolor="dark"
 colorscheme ayu
 set termguicolors
 
@@ -91,7 +94,7 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 "" enable nerd tree toggle
-map <silent> <C-b> :NERDTreeToggle<CR>
+map <silent> <C-g> :NERDTreeToggle<CR>
 
 " Show relative line numbers, except current line which is absolute
 augroup numbertoggle
@@ -106,6 +109,9 @@ set number relativenumber
 " Use smartcase for search and replace
 set ignorecase
 set smartcase
+
+" show opening operator when closing
+set showmatch
 
 " Set 80 characters limit when writing markdown
 au BufRead,BufNewFile *.md setlocal textwidth=80
