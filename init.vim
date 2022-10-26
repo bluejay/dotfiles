@@ -80,6 +80,9 @@ set scrolloff=5
 " Use pboard for vim clipboard
 set clipboard=unnamed
 
+" Open splits on the right
+set splitright
+
 " Recognize the filetype
 syntax on
 filetype on
