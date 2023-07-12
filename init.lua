@@ -1,35 +1,82 @@
-local Plug = vim.fn['plug#']
+-- ensure the packer plugin manager is installed
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
+    vim.cmd([[packadd packer.nvim]])
+    return true
+  end
+  return false
+end
 
-vim.call('plug#begin')
+local packer_bootstrap = ensure_packer()
+
+require("packer").startup(function(use)
+	use("wbthomason/packer.nvim")
+
 	-- Install Vim theme
-	Plug 'ayu-theme/ayu-vim'
+	use({
+		'ayu-theme/ayu-vim',
+		config = function()
+			vim.g.ayucolor = "dark"
+			vim.opt.termguicolors = true
+			vim.cmd('colorscheme ayu')
+		end
+	})
 
 	-- Nicer statusline
-	Plug 'vim-airline/vim-airline'
+	use('vim-airline/vim-airline')
 
 	-- Camelcase motion
-	Plug 'bkad/CamelCaseMotion'
+	use({
+		'bkad/CamelCaseMotion',
+		config = function()
+			vim.call('camelcasemotion#CreateMotionMappings', ',')
+			-- use ,i to map between inner words in camelcase
+			vim.api.nvim_set_keymap('v', ',i', '<Esc>l,bv,e', {})
+			vim.api.nvim_set_keymap('o', ',i', ':normal v,i<CR>', {})
+		end
+	})
 
 	-- Git bindings
-	Plug 'tpope/vim-fugitive'
+	use('tpope/vim-fugitive')
 
 	-- Show marks visually
-	Plug 'kshenoy/vim-signature'
+	use('kshenoy/vim-signature')
 
 	-- Intelligently set rootdir when opening files
-	Plug 'airblade/vim-rooter'
+	use('airblade/vim-rooter')
 
 	-- Languages cludge
-	Plug 'sheerun/vim-polyglot'
+	use('sheerun/vim-polyglot')
 
 	-- NerdTree cludge
-	Plug('scrooloose/nerdtree', {on = 'NERDTreeToggle'})
+	use({
+		'scrooloose/nerdtree',
+		config = function()
+			-- Show hidden files in NERDTree
+			vim.g.NERDTreeShowHidden = 1
+			-- Open NERDTree with Ctrl-g
+			vim.api.nvim_set_keymap('n', '<C-g>', ':NERDTreeToggle<CR>', { silent = true })
+		end
+	})
 
-	-- FZF with vim
-	Plug('junegunn/fzf.vim')
-	Plug('junegunn/fzf', {dir='~/.fzf'})
+	use {
+    'junegunn/fzf.vim',
+    requires = { 'junegunn/fzf', run = ':call fzf#install()' },
+		config = function()
+			--remap <Ctrl-P> to fzf
+			vim.api.nvim_set_keymap('n', '<C-p>', ':FZF<CR>', { silent = true })
+			-- use gitignore in fzf
+			vim.env.FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -f -g ""'
+		end
+	}
 
-vim.call('plug#end')
+	if packer_bootstrap then
+		require('packer').sync()
+	end
+end)
 
 -- Use the system clipboard as the vim clipboard
 vim.o.clipboard = "unnamed"
@@ -45,19 +92,8 @@ vim.cmd('filetype plugin indent on')
 -- Show additional context around top and bottom of buffer
 vim.o.scrolloff=5
 
--- Set the vim theme
-vim.g.ayucolor = "dark"
-vim.opt.termguicolors = true
-vim.cmd('colorscheme ayu')
-
 -- Make Y to yank till end of line (yy is used to lank the curret line)
 vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true })
-
--- Enable camelcase mappings
-vim.call('camelcasemotion#CreateMotionMappings', ',')
--- use ,i to map between inner words in camelcase
-vim.api.nvim_set_keymap('v', ',i', '<Esc>l,bv,e', {})
-vim.api.nvim_set_keymap('o', ',i', ':normal v,i<CR>', {})
 
 -- highlight the current line
 vim.o.cursorline = true
@@ -74,11 +110,11 @@ vim.o.smartcase = true
 
 -- Show the current line number and other lines as relative
 vim.cmd([[
-augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-augroup END
+	augroup numbertoggle
+		autocmd!
+		autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+		autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+	augroup END
 ]])
 
 -- Show line numbers as relative while in insert mode
@@ -97,15 +133,3 @@ vim.opt.listchars = {
 
 -- Enable signcolumn so it doesn't jitter page when apps are using it
 vim.wo.signcolumn = 'yes'
-
--- Open NERDTree with Ctrl-g
-vim.api.nvim_set_keymap('n', '<C-g>', ':NERDTreeToggle<CR>', { silent = true })
-
--- Show hidden files in NERDTree
-vim.g.NERDTreeShowHidden = 1
-
-
---remap <Ctrl-P> to fzf
-vim.api.nvim_set_keymap('n', '<C-p>', ':FZF<CR>', { silent = true })
--- use gitignore in fzf
-vim.env.FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -f -g ""'
