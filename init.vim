@@ -21,19 +21,16 @@ Plug 'junegunn/fzf.vim'
 " Note: Using the following in .zshrc
 " export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 
+"" Intelligently set rootdir when opening files
+Plug 'airblade/vim-rooter'
+
 "" NerdTree cludge -- Long term want to try to get this out of my flow
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 " Languages cludge
 Plug 'sheerun/vim-polyglot'
 
-" Add LSP support
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Integrate haskell ormolu formatter support
-Plug 'sdiehl/vim-ormolu'
-
-" Plug 'alx741/vim-stylishask'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'], 'on': 'MarkdownPreview'}
 
 call plug#end()
 
@@ -80,9 +77,6 @@ set scrolloff=5
 " Use pboard for vim clipboard
 set clipboard=unnamed
 
-" Open splits on the right
-set splitright
-
 " Recognize the filetype
 syntax on
 filetype on
@@ -111,33 +105,16 @@ set number relativenumber
 set ignorecase
 set smartcase
 
+" Smarter indent
+set autoindent
+
+" Enable signcolumn
+set signcolumn=yes
+
 " show opening operator when closing
 set showmatch
-
-" Set 80 characters limit when writing markdown
-au BufRead,BufNewFile *.md setlocal textwidth=80
-au BufRead,BufNewFile *.markdown setlocal textwidth=80
-
-" Remap leader to space
-nnoremap <SPACE> <Nop>
-let mapleader=" "
 
 "" Language Cludge: Rust
 
 " Enable auto rustfmt -- language
 let g:rustfmt_autosave = 1
-
-" Haskell language cludge
-let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
-let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
-let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
-let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
-let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
-let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
-let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
-
-"" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
