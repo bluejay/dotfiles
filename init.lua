@@ -120,6 +120,9 @@ rt.setup({
   },
 })
 
+-- Autoformat rust code
+vim.g.rustfmt_autosave = 1
+
 -- LSP Diagnostics Options Setup 
 vim.diagnostic.config({
     virtual_text = false,
