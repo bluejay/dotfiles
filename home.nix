@@ -18,7 +18,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    lldb
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -35,10 +34,21 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
 
+    # cli tools
+    entr
+    jq
+    thefuck
     
+    # services
+    gh
+    tailscale
+
     # LSP Servers for nvim
+    nil 		       # LSP for Nix
     rust-analyzer  # LSP for Rust
-    nil 		# LSP for Nix
+
+    # Debuggers
+    lldb
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -78,6 +88,26 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  ### Git
+  programs.git = {
+    enable = true;
+    
+    lfs.enable = true;
+
+    extraConfig = {
+      fetch.prune = true;
+      pull.rebase = true; 
+      push.autoSetupRemote = true;
+      core.excludesfile = ''
+        .DS_Store
+        *.swp
+      '';
+    };
+  };
+
+  ### direnv
+  programs.direnv.enable = true;
+ 
   ### Neovim
   programs.neovim = {
     enable = true;
@@ -189,7 +219,6 @@
   };
 
   ### tmux
-
   programs.tmux = {
     enable = true;
     extraConfig = ''
