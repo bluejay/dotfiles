@@ -11,12 +11,9 @@
   };
 
   outputs = { nixpkgs, home-manager, ... }:
-    let
-      system = "aarch64-darwin";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
+    {
       homeConfigurations."jaypalekar" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
 
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
