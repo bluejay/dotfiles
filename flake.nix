@@ -21,6 +21,10 @@
 
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix
+        extraSpecialArgs = {
+          username = "jaypalekar";
+          homeDirectory = "/Users/jaypalekar";
+        };
       };
     };
 }
