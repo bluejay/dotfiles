@@ -40,7 +40,6 @@
     thefuck
     
     # services
-    gh
     tailscale
 
     # LSP Servers for nvim
@@ -108,6 +107,20 @@
   ### direnv
   programs.direnv.enable = true;
  
+  ### zsh
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    syntaxHighlighting.enable = true;
+    oh-my-zsh = {
+      enable = true;
+      theme = "robbyrussell";
+      plugins = [
+        "git"
+      ];
+    };
+  };
+
   ### Neovim
   programs.neovim = {
     enable = true;
@@ -244,5 +257,9 @@
       bind l select-pane -R
     '';
 
+  };
+
+  programs.gh = {
+    enable = true;
   };
 }
