@@ -38,6 +38,7 @@
     entr
     jq
     thefuck
+    httpie
     
     # services
     tailscale
