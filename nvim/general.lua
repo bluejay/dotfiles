@@ -18,6 +18,9 @@ vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true })
 -- highlight the current line
 vim.o.cursorline = true
 
+-- Remove "~" from buffer gutter
+vim.opt.fillchars = { eob = " " }
+
 -- Handle jumping between splits
 vim.api.nvim_set_keymap('n', '<C-J>', '<C-W><C-J>', { silent = true })
 vim.api.nvim_set_keymap('n', '<C-K>', '<C-W><C-K>', { silent = true })

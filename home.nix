@@ -35,13 +35,16 @@
     # '')
 
     # cli tools
+    git-lfs
     entr
     jq
     thefuck
     httpie
+    ripgrep
     
     # services
     tailscale
+    awscli2
 
     # LSP Servers for nvim
     nil 		       # LSP for Nix
@@ -88,6 +91,10 @@
     # EDITOR = "emacs";
   };
 
+  home.shellAliases = {
+    config = "nvim ~/.config/home-manager";
+  };
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -114,7 +121,6 @@
   ### zsh
   programs.zsh = {
     enable = true;
-    enableCompletion = true;
     syntaxHighlighting.enable = true;
     oh-my-zsh = {
       enable = true;
@@ -123,6 +129,21 @@
         "git"
       ];
     };
+    initExtra = ''
+      # Function to check if in Nix shell and get its name
+      nix_shell_info() {
+        if [[ -n "$IN_NIX_SHELL" ]]; then
+          if [[ -n "$SHELL_NAME" ]]; then
+            echo "($SHELL_NAME)"
+          else
+            echo "(nix)"
+          fi
+        fi
+      }
+
+      # Modify your prompt to include the Nix shell info
+      PROMPT='$(nix_shell_info)'$PROMPT
+    '';
   };
 
   ### Neovim
@@ -161,6 +182,7 @@
           vim.g.airline_theme = 'nordic'
         '';
       }
+      vim-airline-themes
 
       # General Use
       vim-fugitive

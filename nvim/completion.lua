@@ -24,7 +24,6 @@ cmp.setup({
   },
 
   mapping = {
-    ["<Esc>"]   = cmp.mapping.abort(),
     ["<CR>"]    = cmp.mapping.confirm({
                     behavior = cmp.ConfirmBehavior.Insert,
                     select = true,
