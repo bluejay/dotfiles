@@ -38,9 +38,11 @@
     git-lfs
     entr
     jq
+    just
     thefuck
     httpie
     ripgrep
+    direnv
     
     # services
     tailscale
@@ -130,7 +132,7 @@
       ];
     };
     initExtra = ''
-      # Function to check if in Nix shell and get its name
+      # Function to check if in Nix shell, get its name, and show in the prompt
       nix_shell_info() {
         if [[ -n "$IN_NIX_SHELL" ]]; then
           if [[ -n "$SHELL_NAME" ]]; then
@@ -143,6 +145,12 @@
 
       # Modify your prompt to include the Nix shell info
       PROMPT='$(nix_shell_info)'$PROMPT
+
+      # Generate Just completion script
+      if [ ! -f ${config.xdg.dataHome}/zsh/site-functions/_just ]; then
+        mkdir -p ${config.xdg.dataHome}/zsh/site-functions
+        ${pkgs.just}/bin/just --completions zsh > ${config.xdg.dataHome}/zsh/site-functions/_just
+      fi
     '';
   };
 
@@ -172,20 +180,20 @@
         config = ''
           vim.opt.termguicolors = true
           vim.cmd('colorscheme nordic')
-          require'nordic'.setup({ telescope = { style = 'flat' }})
+          require('nordic').setup({ telescope = { style = 'flat' }})
         '';
       }
+  
 
-      { plugin = vim-airline;
+      { plugin = mini-nvim;
         type = "lua";
         config = ''
-          vim.g.airline_theme = 'nordic'
+          require('mini.statusline').setup()
+          require('mini.git').setup() 
         '';
       }
-      vim-airline-themes
 
       # General Use
-      vim-fugitive
       vim-rooter
       vim-signature
 

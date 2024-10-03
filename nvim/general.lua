@@ -51,7 +51,6 @@ vim.cmd([[
 	augroup END
 ]])
 
-
 -- Show line numbers as relative while in insert mode
 vim.wo.number = true
 vim.wo.relativenumber = true
