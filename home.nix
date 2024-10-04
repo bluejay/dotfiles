@@ -183,19 +183,17 @@
           require('nordic').setup({ telescope = { style = 'flat' }})
         '';
       }
-  
 
-      { plugin = mini-nvim;
+      { plugin = lualine-nvim;
         type = "lua";
         config = ''
-          require('mini.statusline').setup()
-          require('mini.git').setup() 
+          require('lualine').setup({
+            options = {
+              theme = 'nordic'
+            }
+          })
         '';
       }
-
-      # General Use
-      vim-rooter
-      vim-signature
 
       { plugin = camelcasemotion;
         type = "lua";
@@ -219,7 +217,6 @@
         '';
       }
 
-
       { plugin = telescope-nvim;
         type = "lua";
         config = ''
@@ -228,13 +225,6 @@
           vim.keymap.set('n', '<C-_>', telescope.live_grep, {})
         '';
       }
-
-      # LSP and Code Completion
-      nvim-lspconfig
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-nvim-lsp-signature-help
-      luasnip
 
       { plugin = nvim-treesitter.withAllGrammars;
         type = "lua";
@@ -248,6 +238,14 @@
             }
         '';
       }
+
+
+      # LSP and Code Completion
+      nvim-lspconfig
+      nvim-cmp
+      cmp-nvim-lsp
+      cmp-nvim-lsp-signature-help
+      luasnip
 
       # DAP and debuggers
       nvim-dap
