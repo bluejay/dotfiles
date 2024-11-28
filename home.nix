@@ -1,5 +1,4 @@
 { config, pkgs, specialArgs, ... }:
-
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -72,6 +71,11 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+
+    "./.config/nvim/" = {
+        source = ./nvim;
+        recursive = true;
+    };
   };
 
   # Home Manager can also manage your environment variables through
@@ -158,108 +162,35 @@
   programs.neovim = {
     enable = true;
 
-    plugins = let
-      fromGitHub = {user, repo, rev, buildScript ? ":"}: pkgs.vimUtils.buildVimPlugin {
-        pname = "${pkgs.lib.strings.sanitizeDerivationName repo}";
-        version = rev;
-        src = builtins.fetchGit {
-          url = "https://github.com/${user}/${repo}.git";
-          inherit rev;
-        };
-        inherit buildScript;
-      };    
-    in
-    with pkgs.vimPlugins; [
+    plugins = with pkgs.vimPlugins; [
       # Themes and visuals
-      { plugin = (fromGitHub { 
-          user = "AlexvZyl"; 
-          repo = "nordic.nvim"; 
-          rev  = "6819225c693aa7ae0c0b1945aa17fe43218945f3";
-        });
+      {
+        plugin = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
+          p.lua
+          p.nix
+          p.rust
+          p.python
+          p.javascript
+          p.typescript
+          p.json
+          p.yaml
+          p.toml
+          p.markdown
+          p.vim
+          p.bash
+          p.ocaml
+        ]));
         type = "lua";
         config = ''
-          vim.opt.termguicolors = true
-          vim.cmd('colorscheme nordic')
-          require('nordic').setup({ telescope = { style = 'flat' }})
-        '';
-      }
-
-      { plugin = lualine-nvim;
-        type = "lua";
-        config = ''
-          require('lualine').setup({
-            options = {
-              theme = 'nordic'
-            }
+          require('nvim-treesitter.configs').setup({
+            highlight = { enable = true },
+            indent = { enable = true },
           })
         '';
       }
-
-      { plugin = camelcasemotion;
-        type = "lua";
-        config = ''
-          vim.call('camelcasemotion#CreateMotionMappings', ',')
-
-          -- use ,i to map between inner words in camelcase
-          vim.api.nvim_set_keymap('v', ',i', '<Esc>l,bv,e', {})
-          vim.api.nvim_set_keymap('o', ',i', ':normal v,i<CR>', {})
-        '';
-      }
-
-      { plugin = nerdtree;
-        type = "lua";
-        config = ''
-          -- Show hidden files in NERDTree
-          vim.g.NERDTreeShowHidden = 1
-
-          -- Open NERDTree with Ctrl-g
-          vim.api.nvim_set_keymap('n', '<C-g>', ':NERDTreeToggle<CR>', { silent = true })
-        '';
-      }
-
-      { plugin = telescope-nvim;
-        type = "lua";
-        config = ''
-          local telescope = require('telescope.builtin')
-          vim.keymap.set('n', '<C-p>', telescope.find_files, {})
-          vim.keymap.set('n', '<C-_>', telescope.live_grep, {})
-        '';
-      }
-
-      { plugin = nvim-treesitter.withAllGrammars;
-        type = "lua";
-        config = ''
-            require('nvim-treesitter.configs').setup {
-              indent = { enable = true },
-              highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-              },
-            }
-        '';
-      }
-
-
-      # LSP and Code Completion
-      nvim-lspconfig
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-nvim-lsp-signature-help
-      luasnip
-
-      # DAP and debuggers
-      nvim-dap
-      telescope-dap-nvim
-
-
     ];
 
     extraLuaConfig = ''
-      ${builtins.readFile ./nvim/general.lua}
-
-      ${builtins.readFile ./nvim/completion.lua}
-      ${builtins.readFile ./nvim/debugger.lua}
-      ${builtins.readFile ./nvim/lsp.lua}
     '';
   };
 
