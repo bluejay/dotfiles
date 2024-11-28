@@ -64,6 +64,9 @@ vim.opt.fillchars = { eob = ' ' }
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- Make Y to yank till end of line (yy is used to lank the curret line)
+vim.keymap.set('n', 'Y', 'y$', { noremap = true })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
